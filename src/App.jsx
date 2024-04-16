@@ -10,6 +10,7 @@ import MenuPage from './pages/MenuPage';
 import OrderPage from './pages/OrderPage';
 import Navbar from './components/Navbar';
 import { AuthProvider } from './contexts/AuthContext'; // Adjust the import path as necessary
+import MyOrdersPage from './components/MyOrdersPage';
 
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
         <Route path="login" element={<AuthPage />} />
         <Route path="menu" element={<MenuPage />} />
         <Route path="order" element={<OrderPage />} />
+        <Route path="ord" element={<MyOrdersPage />} />
+
         {/* Add more routes as needed */}
       </Routes>
     </BrowserRouter>
