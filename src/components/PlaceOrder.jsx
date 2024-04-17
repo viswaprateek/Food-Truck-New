@@ -3,12 +3,16 @@ import { Button, Typography, Dialog, DialogContent, Box } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext'; // Adjust the import path as necessary
 import DeliveryForm from './DeliveryForm'; // Ensure this path is correct
 import MockPaymentForm from './MockPaymentForm'; // Ensure this path is correct
+import { useOrders } from '../contexts/OrdersContext'; // Import the OrdersContext hook
+// import { OrdersProvider } from '../contexts/OrdersContext.jsx';
 
-const PlaceOrder = ({ onPlaceOrder }) => {
+const PlaceOrder = () => {
   const { isAuthenticated } = useAuth();
+  // const { addOrder } = useOrders(); 
   const [showDeliveryForm, setShowDeliveryForm] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
+  const [orderData, setOrderData] = useState(null); 
 
   const handleOpenDeliveryForm = () => {
     setShowDeliveryForm(true);
@@ -17,6 +21,7 @@ const PlaceOrder = ({ onPlaceOrder }) => {
   const handleSubmitDeliveryDetails = (deliveryDetails) => {
     console.log('Delivery Details:', deliveryDetails);
     // Here, you'd normally validate and process delivery details
+    setOrderData(deliveryDetails); // Store delivery details in state
     setShowDeliveryForm(false); // Close the delivery form
     setShowPaymentForm(true); // Open the payment form
   };
@@ -25,11 +30,12 @@ const PlaceOrder = ({ onPlaceOrder }) => {
     console.log('Payment successful');
     setPaymentComplete(true); // Indicate payment success
     setShowPaymentForm(false); // Close the payment form
-    // onPlaceOrder(); // If you have additional logic for placing the order, call it here
+    // addOrder(orderData); 
   };
 
   return (
-    <>
+    
+       <>
       {isAuthenticated ? (
         <>
           {!showDeliveryForm && !showPaymentForm && !paymentComplete ? (
@@ -61,6 +67,8 @@ const PlaceOrder = ({ onPlaceOrder }) => {
         </Typography>
       )}
     </>
+    
+   
   );
 };
 

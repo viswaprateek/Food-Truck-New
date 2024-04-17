@@ -1,20 +1,40 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent,DialogActions, List, ListItem, ListItemText, Divider, Typography, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemText, Divider, Typography, Button } from '@mui/material';
 import AuthPage from '../pages/AuthPage'; // Adjust the path according to your structure
-import PlaceOrder from './PlaceOrder';
-import { useAuth } from '../contexts/AuthContext'; 
+import { useOrders } from '../contexts/OrdersContext'; // Import the OrdersContext hook
+import { useAuth } from '../contexts/AuthContext'; // Import the AuthContext hook
 
 const Cart = ({ open, onClose, cartItems }) => {
   const handleClose = () => {
     onClose();
   };
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth(); // Use the useAuth hook
+  const { addOrder } = useOrders(); // Access the addOrder function from OrdersContext
+
   const handlePlaceOrder = () => {
-    // Placeholder logic for placing an order
-    console.log('Order has been placed');
+    // Calculate total amount
+    const totalAmount = calculateTotal(cartItems);
+  
+    // Construct order object with all details including quantity
+    const order = {
+      items: cartItems.map(item => ({
+        ...item,
+        quantity: item.quantity, 
+        total: item.price * item.quantity, // Calculate total before spreading
+        
+      })),
+      total: totalAmount,
+    };
+  
+    // Add order to orders
+    addOrder(order);
+    
+    console.log('Order has been placed'); // Placeholder logic for placing an order
     onClose();
   };
+  
+
   const calculateTotal = (items) => items.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
 
   return (
@@ -44,7 +64,9 @@ const Cart = ({ open, onClose, cartItems }) => {
       </DialogContent>
       <DialogActions>
         {isAuthenticated ? (
-          <PlaceOrder onPlaceOrder={handlePlaceOrder} />
+          <Button onClick={handlePlaceOrder} color="primary">
+            Place Order
+          </Button>
         ) : (
           <AuthPage /> // You might need to adjust this depending on how your AuthPage is designed
         )}

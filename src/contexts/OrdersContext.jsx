@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState } from 'react';
-import App from '../App';
-// Create the OrdersContext
+
+// Create the context
 const OrdersContext = createContext();
 
-// Custom hook to consume the OrdersContext
+// Create a custom hook to consume the context
 export const useOrders = () => useContext(OrdersContext);
 
-// OrdersProvider component to provide the context value
+// Create the provider component
 export const OrdersProvider = ({ children }) => {
   // State to store the orders
   const [orders, setOrders] = useState([]);
@@ -25,7 +25,6 @@ export const OrdersProvider = ({ children }) => {
   return (
     <OrdersContext.Provider value={value}>
       {children}
-      {/* <App /> */}
     </OrdersContext.Provider>
   );
 };
