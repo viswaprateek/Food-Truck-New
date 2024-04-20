@@ -11,7 +11,7 @@ const OrdersPage = () => {
       <div className="order-cards">
         {orders.map((order, index) => (
           <div key={index} className="order-card">
-            <h2>Order ID: {index + 200}</h2>
+            <h2>Order ID: {index + 201}</h2>
             <ul>
               {order.items.map((item, ind) => (
                 <li key={ind}>
@@ -29,8 +29,18 @@ const OrdersPage = () => {
                 </li>
               ))}
             </ul>
-            <p>Grand Total: ${order.total}</p>
-          </div>
+
+            <p>.
+              .
+              .
+            </p>
+            <h2>Grand Total: ${order.total}</h2>
+          
+          <div className="rib">
+          <div className="box1"><button >Pending</button></div>
+          <div className="box2"><img src="https://i.imgur.com/r60RMUT.png" alt="" /></div></div>
+            
+           </div>
         ))}
       </div>
     </div>

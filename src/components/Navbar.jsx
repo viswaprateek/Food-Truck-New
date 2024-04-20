@@ -25,6 +25,8 @@ function Navbar() {
           <Button color="inherit" component={Link} to="/login">Login</Button>
           <Button color="inherit" component={Link} to="/menu">Menu</Button>
           <Button color="inherit" component={Link} to="/order">Orders</Button>
+          <Button color="inherit" component={Link} to="/AdminAddItemPage">Add</Button>
+
 
         </Toolbar>
       </AppBar>

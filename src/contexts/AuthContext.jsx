@@ -1,20 +1,25 @@
-// AuthContext.js
+import React, { createContext, useState, useContext } from 'react';
 
-import React, { createContext, useContext, useState } from 'react';
-
+// Create a context for authentication
 const AuthContext = createContext();
 
+// Custom hook to use the authentication context
 export const useAuth = () => useContext(AuthContext);
 
+// AuthProvider component to wrap the entire application and provide authentication functionality
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track authentication status
 
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+  // Function to set the authentication status when the user logs in or out
+  const setAuthStatus = (status) => {
+    setIsLoggedIn(status);
+  };
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  // Value object to be provided by the context
+  const value = {
+    isLoggedIn,
+    setAuthStatus,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

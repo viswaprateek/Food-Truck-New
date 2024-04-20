@@ -11,6 +11,7 @@ import OrderPage from './pages/OrderPage';
 import Navbar from './components/Navbar';
 import { AuthProvider } from './contexts/AuthContext'; // Adjust the import path as necessary
 import { OrdersProvider } from './contexts/OrdersContext.jsx';
+import AdminAddItemPage from './pages/AdminAddItemPage.jsx';
 
 
 
@@ -28,6 +29,9 @@ function App() {
         <Route path="login" element={<AuthPage />} />
         <Route path="menu" element={<MenuPage />} />
         <Route path="order" element={<OrderPage />} />
+        <Route path="order" element={<OrderPage />} />
+        <Route path="AdminAddItemPage" element={<AdminAddItemPage />} />
+
         {/* <Route path="ord" element={<MyOrdersPage />} /> */}
 
         {/* Add more routes as needed */}

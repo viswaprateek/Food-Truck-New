@@ -1,44 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Card, CardMedia, CardContent, CardActions, IconButton, Typography, Button } from '@mui/material';
 import Cart from '../components/Cart'; // Adjust the path according to your structure
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { useOrders } from '../contexts/OrdersContext'; // Import the OrdersContext hook
-
-const menuItems = [
-  {
-    id: 1,
-    name: 'Cheeseburger',
-    description: 'A juicy burger with cheese, lettuce, tomato, and our special sauce.',
-    price: 8.99,
-    imageUrl: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJ1cmdlcnxlbnwwfHwwfHx8MA%3D%3D',
-  },
-  {
-    id: 2,
-    name: 'Spaghetti Carbonara',
-    description: 'A delicious Spaghetti made of veggies, tomato, and onion.',
-    price: 7.99,
-    imageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bm9vZGxlc3xlbnwwfHwwfHx8MA%3D%3D',
-  },
-  {
-    id: 3,
-    name: 'Margherita Pizza',
-    description: 'Classic pizza topped with tomato sauce, mozzarella cheese, and fresh basil.',
-    price: 10.99,
-    imageUrl: 'https://images.unsplash.com/photo-1598023696416-0193a0bcd302?q=80&w=1872&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  },
-  
-  // Add more items as needed
-];
+import axios from 'axios'; // Import axios for making API requests
 
 const MenuPage = () => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setCartOpen] = useState(false);
-  const [quantities, setQuantities] = useState(menuItems.reduce((acc, item) => {
-    acc[item.id] = 1;
-    return acc;
-  }, {}));
+  const [menuItems, setMenuItems] = useState([]); // State to store menu items
+  const [quantities, setQuantities] = useState({}); // State to store quantities
   const { addOrder } = useOrders();
+
+  useEffect(() => {
+    // Fetch menu items from the database
+    const fetchMenuItems = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/item/all');
+        setMenuItems(response.data); // Set the fetched menu items to state
+        // Initialize quantities for each item
+        const initialQuantities = response.data.reduce((acc, item) => {
+          acc[item.itemId] = 1;
+          return acc;
+        }, {});
+        setQuantities(initialQuantities);
+      } catch (error) {
+        console.error('Error fetching menu items:', error);
+      }
+    };
+    fetchMenuItems();
+  }, []);
 
   const handleQuantityChange = (itemId, delta) => {
     setQuantities(prevQuantities => ({
@@ -53,18 +45,19 @@ const MenuPage = () => {
 
   const handleAddToCart = (itemToAdd) => {
     setCart((currentCart) => {
-      const existingItemIndex = currentCart.findIndex(item => item.id === itemToAdd.id);
+      const existingItemIndex = currentCart.findIndex(item => item.itemId === itemToAdd.itemId);
       if (existingItemIndex > -1) {
-        // Clone the cart to avoid mutating the state directly
+        // If the item already exists in the cart, update its quantity
         const newCart = [...currentCart];
-        newCart[existingItemIndex].quantity += quantities[itemToAdd.id];
+        newCart[existingItemIndex].quantity += quantities[itemToAdd.itemId];
         return newCart;
       } else {
-        return [...currentCart, { ...itemToAdd, quantity: quantities[itemToAdd.id] }];
+        // If the item doesn't exist in the cart, add it with the specified quantity
+        return [...currentCart, { ...itemToAdd, quantity: quantities[itemToAdd.itemId] }];
       }
     });
-    // addOrder(itemToAdd); 
   };
+  
 
   const handlePlaceOrder = () => {
     // addOrder(cart);
@@ -77,12 +70,12 @@ const MenuPage = () => {
         View Cart
       </Button>
       {menuItems.map((item) => (
-        <Grid item key={item.id} xs={12} sm={6} md={4} lg={3}>
+        <Grid item key={item.itemId} xs={12} sm={6} md={4} lg={3}>
           <Card raised>
             <CardMedia
               component="img"
               height="140"
-              image={item.imageUrl}
+              image={item.pictureUrl}
               alt={item.name}
             />
             <CardContent>
@@ -93,16 +86,20 @@ const MenuPage = () => {
                 {item.description}
               </Typography>
               <Typography variant="h6">
-                ${item.price.toFixed(2)}
-              </Typography>
+
+  {typeof item.price === 'number' ? `$${item.price.toFixed(2)}` : 'Invalid Price'}
+</Typography>
+
+
+
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '8px' }}>
-                <IconButton onClick={() => handleQuantityChange(item.id, -1)}>
+                <IconButton onClick={() => handleQuantityChange(item.itemId, -1)}>
                   <RemoveCircleOutlineIcon />
                 </IconButton>
                 <Typography variant="h6" style={{ margin: '0 20px' }}>
-                  {quantities[item.id]}
+                  {quantities[item.itemId]}
                 </Typography>
-                <IconButton onClick={() => handleQuantityChange(item.id, 1)}>
+                <IconButton onClick={() => handleQuantityChange(item.itemId, 1)}>
                   <AddCircleOutlineIcon />
                 </IconButton>
               </div>

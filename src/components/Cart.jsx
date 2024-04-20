@@ -1,15 +1,15 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemText, Divider, Typography, Button } from '@mui/material';
-import AuthPage from '../pages/AuthPage'; // Adjust the path according to your structure
 import { useOrders } from '../contexts/OrdersContext'; // Import the OrdersContext hook
 import { useAuth } from '../contexts/AuthContext'; // Import the AuthContext hook
+import AuthPage from '../pages/AuthPage'; // Adjust the path according to your structure
 
 const Cart = ({ open, onClose, cartItems }) => {
   const handleClose = () => {
     onClose();
   };
 
-  const { isAuthenticated } = useAuth(); // Use the useAuth hook
+  const { isLoggedIn } = useAuth(); // Use the useAuth hook
   const { addOrder } = useOrders(); // Access the addOrder function from OrdersContext
 
   const handlePlaceOrder = () => {
@@ -19,10 +19,13 @@ const Cart = ({ open, onClose, cartItems }) => {
     // Construct order object with all details including quantity
     const order = {
       items: cartItems.map(item => ({
-        ...item,
+        itemId: item.itemId,
+        name: item.name,
+        description: item.description,
+        pictureUrl: item.pictureUrl,
+        price: parseFloat(item.price), // Parse price as float
         quantity: item.quantity, 
-        total: item.price * item.quantity, // Calculate total before spreading
-        
+        total: parseFloat(item.price) * item.quantity, // Calculate total before spreading
       })),
       total: totalAmount,
     };
@@ -34,8 +37,7 @@ const Cart = ({ open, onClose, cartItems }) => {
     onClose();
   };
   
-
-  const calculateTotal = (items) => items.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
+  const calculateTotal = (items) => items.reduce((acc, item) => acc + parseFloat(item.price) * item.quantity, 0).toFixed(2);
 
   return (
     <Dialog onClose={handleClose} open={open} fullWidth maxWidth="sm">
@@ -43,12 +45,12 @@ const Cart = ({ open, onClose, cartItems }) => {
       <DialogContent>
         <List dense>
           {cartItems.map((item, index) => (
-            <React.Fragment key={item.id}>
+            <React.Fragment key={item.itemId}>
               {index > 0 && <Divider />}
               <ListItem>
                 <ListItemText
                   primary={item.name}
-                  secondary={`Quantity: ${item.quantity} Price: $${(item.price * item.quantity).toFixed(2)}`}
+                  secondary={`Quantity: ${item.quantity} Price: $${(parseFloat(item.price) * item.quantity).toFixed(2)}`}
                 />
               </ListItem>
             </React.Fragment>
@@ -63,7 +65,7 @@ const Cart = ({ open, onClose, cartItems }) => {
         </Button>
       </DialogContent>
       <DialogActions>
-        {isAuthenticated ? (
+        {isLoggedIn ? (
           <Button onClick={handlePlaceOrder} color="primary">
             Place Order
           </Button>
