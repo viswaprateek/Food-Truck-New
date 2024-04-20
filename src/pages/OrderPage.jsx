@@ -1,50 +1,46 @@
-import React from 'react';
-import { useOrders } from '../contexts/OrdersContext';
-import './OrderPage.css'
-const OrdersPage = () => {
-  const { orders } = useOrders();
-  console.log(orders);
-  
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './OrderPage.css';
+
+function OrderPage() {
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    async function fetchOrders() {
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/order/getordersuccess');
+        setOrders(response.data);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
+    }
+    fetchOrders();
+  }, []);
+
   return (
-    <div className="orders-container">
+    <div className="order-page">
       <h1>Orders</h1>
       <div className="order-cards">
-        {orders.map((order, index) => (
-          <div key={index} className="order-card">
-            <h2>Order ID: {index + 201}</h2>
+        {orders.map(order => (
+          <div key={order.orderid} className="order-card">
+            <h2>Order ID: {order.orderid}</h2>
+            <p>Username: {order.username}</p>
+            <p>Total Price: ${order.totalprice}</p>
+            <p>Order Status: {order.orderstatus}</p>
+            <p>Payment Status: {order.paymentstatus}</p>
+            <h3>Items:</h3>
             <ul>
-              {order.items.map((item, ind) => (
-                <li key={ind}>
-                  <p>Name: {item.name}</p>
-                  <p>Quantity: {item.quantity}</p>
-                  {item.price !== undefined && (
-                    <p>Price per item: ${item.price.toFixed(2)}</p>
-                  )}
-                  {item.total !== undefined && (
-                    <p>Total: ${item.total.toFixed(2)}</p>
-                  )}
-                  {item.imageUrl && (
-                    <img src={item.imageUrl} alt={item.name} style={{ maxWidth: '200px' }} />
-                  )}
+              {order.items.map(item => (
+                <li key={item.itemid}>
+                  {item.itemdescription} - ${item.itemprice} x {item.itemquantity}
                 </li>
               ))}
             </ul>
-
-            <p>.
-              .
-              .
-            </p>
-            <h2>Grand Total: ${order.total}</h2>
-          
-          <div className="rib">
-          <div className="box1"><button >Pending</button></div>
-          <div className="box2"><img src="https://i.imgur.com/r60RMUT.png" alt="" /></div></div>
-            
-           </div>
+          </div>
         ))}
       </div>
     </div>
   );
-};
+}
 
-export default OrdersPage;
+export default OrderPage;

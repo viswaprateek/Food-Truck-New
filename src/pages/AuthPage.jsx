@@ -57,7 +57,13 @@ function AuthPage() {
       // Handle the response based on the message
       if (response.data.message === 'User created successfully' || response.data.success === 'Login successful') {
         // Update the authentication status to true
-        setAuthStatus(true); // Update authentication status here
+        setAuthStatus(true,formData.name);
+        // Save the username if available
+
+        // if (formData.name) {
+          // auth.setUsername(formData.name);
+        // }
+
         alert(`${response.data.message || response.data.success}\nNow redirecting you to menu...`);
         navigate('/menu');
       } else if (response.data.error === 'Email already exists') {
@@ -84,7 +90,7 @@ function AuthPage() {
           {isLoggedIn ? 'Logout' : (isLogin ? 'Login' : 'Sign Up')}
         </Typography>
         <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
-          {!isLogin && !isLoggedIn &&  (
+          {!isLoggedIn &&  (
             <TextField
               margin="normal"
               required
@@ -113,33 +119,32 @@ function AuthPage() {
           )}
           {!isLoggedIn &&  (
             <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="emailid"
-            label="Email Address"
-            name="emailid"
-            autoComplete="email"
-            autoFocus
-            value={formData.emailid}
-            onChange={handleChange}
-          />
+              margin="normal"
+              required
+              fullWidth
+              id="emailid"
+              label="Email Address"
+              name="emailid"
+              autoComplete="email"
+              autoFocus
+              value={formData.emailid}
+              onChange={handleChange}
+            />
           )}
           {!isLoggedIn &&  (
-           <TextField
-           margin="normal"
-           required
-           fullWidth
-           name="password"
-           label="Password"
-           type="password"
-           id="password"
-           autoComplete="current-password"
-           value={formData.password}
-           onChange={handleChange}
-         />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={formData.password}
+              onChange={handleChange}
+            />
           )}
-          
           
           {!isLogin && !isLoggedIn &&  (
             <TextField
@@ -154,10 +159,10 @@ function AuthPage() {
               onChange={handleChange}
             />
           )}
-          {!isLoggedIn &&(
-                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                {isLogin ? 'Login' : 'Sign Up'}
-              </Button>
+          {!isLoggedIn && (
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+              {isLogin ? 'Login' : 'Sign Up'}
+            </Button>
           )}
           
           {isLoggedIn && (
@@ -166,17 +171,15 @@ function AuthPage() {
             </Button>
           )}
 
-              {!isLoggedIn &&(
-                <Grid container>
-                <Grid item>
-                  <Button onClick={toggleForm} sx={{ textTransform: 'none' }}>
-                    {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign in'}
-                  </Button>
-                </Grid>
+          {!isLoggedIn && (
+            <Grid container>
+              <Grid item>
+                <Button onClick={toggleForm} sx={{ textTransform: 'none' }}>
+                  {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign in'}
+                </Button>
               </Grid>
+            </Grid>
           )}
-          
-          
         </Box>
       </Paper>
     </Container>
